@@ -1,0 +1,36 @@
+/* Fees.css */
+.fees-page {
+    max-width: 1400px;
+}
+
+.fee-stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.fee-summary-box {
+    margin-top: 20px;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.fee-summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 900px) {
+    .fee-stats-row {
+        grid-template-columns: 1fr 1fr;
+    }
+}

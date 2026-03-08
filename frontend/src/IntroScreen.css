@@ -1,0 +1,406 @@
+/* ============================================================
+   INTRO SCREEN - Full-screen cinematic intro animation
+   ============================================================ */
+
+.intro-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    overflow: hidden;
+    background: #020617;
+}
+
+.intro-bg-image-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.intro-bg-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.6;
+    filter: blur(1px);
+    transform: scale(1.1);
+    animation: slowZoom 20s infinite alternate linear;
+}
+
+.intro-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 0%, #020617 85%);
+}
+
+@keyframes slowZoom {
+    from {
+        transform: scale(1.05) rotate(0deg);
+    }
+
+    to {
+        transform: scale(1.15) rotate(1deg);
+    }
+}
+
+/* Animated Grid Background */
+.intro-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(99, 102, 241, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 102, 241, 0.07) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+    from {
+        transform: perspective(500px) rotateX(45deg) translateY(0);
+    }
+
+    to {
+        transform: perspective(500px) rotateX(45deg) translateY(60px);
+    }
+}
+
+/* Particles */
+.intro-particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleFly var(--dur, 4s) var(--delay, 0s) ease-out infinite;
+}
+
+@keyframes particleFly {
+    0% {
+        opacity: 0;
+        transform: translateY(100vh) scale(0);
+    }
+
+    10% {
+        opacity: 0.8;
+    }
+
+    90% {
+        opacity: 0.4;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-20vh) scale(1.5);
+    }
+}
+
+/* Glowing orbs */
+.intro-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.25;
+    animation: orbPulse 4s ease-in-out infinite alternate;
+}
+
+.intro-orb-1 {
+    width: 500px;
+    height: 500px;
+    background: #6366f1;
+    top: -100px;
+    left: -100px;
+    animation-delay: 0s;
+}
+
+.intro-orb-2 {
+    width: 400px;
+    height: 400px;
+    background: #0ea5e9;
+    bottom: -100px;
+    right: -100px;
+    animation-delay: 2s;
+}
+
+.intro-orb-3 {
+    width: 300px;
+    height: 300px;
+    background: #8b5cf6;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation-delay: 1s;
+}
+
+@keyframes orbPulse {
+    from {
+        opacity: 0.15;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0.35;
+        transform: scale(1.15);
+    }
+}
+
+/* Center Content */
+.intro-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    text-align: center;
+}
+
+/* Logo Icon */
+.intro-logo-wrap {
+    position: relative;
+    animation: logoEnter 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    animation-delay: 0.3s;
+}
+
+@keyframes logoEnter {
+    from {
+        opacity: 0;
+        transform: scale(0) rotate(-180deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.intro-logo-ring {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid rgba(99, 102, 241, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: ringRotate 8s linear infinite;
+}
+
+@keyframes ringRotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.intro-logo-ring::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: #6366f1;
+    border-right-color: #8b5cf6;
+    animation: ringRotate 2s linear infinite reverse;
+}
+
+.intro-logo-inner {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.6);
+    animation: logoGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes logoGlow {
+    from {
+        box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+    }
+
+    to {
+        box-shadow: 0 0 60px rgba(99, 102, 241, 0.9);
+    }
+}
+
+/* Title Text */
+.intro-title-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.intro-subtitle {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #818cf8;
+    opacity: 0;
+    animation: textFadeUp 0.6s ease forwards;
+    animation-delay: 0.8s;
+}
+
+.intro-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 800;
+    line-height: 1;
+    background: linear-gradient(135deg, #f1f5f9 0%, #818cf8 50%, #6366f1 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0;
+    animation: textFadeUp 0.8s ease forwards;
+    animation-delay: 1s;
+}
+
+.intro-desc {
+    font-size: 16px;
+    color: #94a3b8;
+    max-width: 480px;
+    opacity: 0;
+    animation: textFadeUp 0.8s ease forwards;
+    animation-delay: 1.3s;
+}
+
+@keyframes textFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading Bar */
+.intro-progress-wrap {
+    width: 320px;
+    opacity: 0;
+    animation: textFadeUp 0.6s ease forwards;
+    animation-delay: 1.6s;
+}
+
+.intro-progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.intro-progress-track {
+    height: 4px;
+    background: rgba(99, 102, 241, 0.15);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.intro-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6, #0ea5e9);
+    border-radius: 999px;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
+}
+
+/* Loading Dots */
+.intro-dots {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    animation: textFadeUp 0.6s ease forwards;
+    animation-delay: 1.8s;
+}
+
+.intro-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #6366f1;
+    animation: dotBounce 1.2s ease-in-out infinite;
+}
+
+.intro-dot:nth-child(2) {
+    animation-delay: 0.2s;
+    background: #8b5cf6;
+}
+
+.intro-dot:nth-child(3) {
+    animation-delay: 0.4s;
+    background: #0ea5e9;
+}
+
+@keyframes dotBounce {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: translateY(-12px) scale(1.2);
+        opacity: 1;
+    }
+}
+
+/* Exit Animation */
+.intro-screen.exiting {
+    animation: introExit 0.8s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+@keyframes introExit {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    60% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.95);
+        pointer-events: none;
+    }
+}
+
+/* Features grid at bottom */
+.intro-features {
+    display: flex;
+    gap: 24px;
+    opacity: 0;
+    animation: textFadeUp 0.8s ease forwards;
+    animation-delay: 2s;
+}
+
+.intro-feature-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #818cf8;
+}
