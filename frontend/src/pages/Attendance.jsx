@@ -56,6 +56,32 @@ export default function Attendance() {
         }
     };
 
+    const exportCSV = () => {
+        const headers = ['Course', 'Date', 'Status', 'Present Count', 'Absent Count'];
+        const rows = history.map(h => [
+            h.course || 'N/A',
+            h.date || 'N/A',
+            h.status || 'N/A',
+            (h.status === 'Present' ? 1 : 0) || h.present || 0,
+            (h.status === 'Absent' ? 1 : 0) || h.absent || 0
+        ]);
+
+        const csvRows = [headers, ...rows].map(row =>
+            row.map(value => `"${String(value || '').replace(/"/g, '""')}"`).join(',')
+        );
+        const BOM = '\uFEFF';
+        const csvContent = BOM + csvRows.join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `Attendance_History_${new Date().toISOString().split('T')[0]}.csv`;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <div className="attendance-page">
             <div className="page-header">
@@ -63,9 +89,12 @@ export default function Attendance() {
                     <h1 className="page-title">Attendance</h1>
                     <p className="page-subtitle">Mark & track student attendance</p>
                 </div>
-                <button className="btn btn-primary" onClick={handleSave}>
-                    <MdSave /> {saved ? 'Saved! ✓' : 'Save Attendance'}
-                </button>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                    <button className="btn btn-secondary" onClick={exportCSV}>📤 Export History</button>
+                    <button className="btn btn-primary" onClick={handleSave}>
+                        <MdSave /> {saved ? 'Saved! ✓' : 'Save Attendance'}
+                    </button>
+                </div>
             </div>
 
             <div className="attendance-layout">

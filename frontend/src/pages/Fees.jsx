@@ -16,8 +16,18 @@ const STATUS_COLORS = {
 };
 
 function FeeModal({ fee, onClose, onSave, studentsList = [] }) {
-    const [form, setForm] = useState(fee || { studentName: '', rollNo: '', feeType: '', amount: '', paid: '', dueDate: '', method: 'Online', txn: '' });
+    const [form, setForm] = useState(fee || { studentName: '', rollNo: '', feeType: '', amount: '', paid: '', dueDate: '', method: 'Online', txn: '', paymentScreenshot: '' });
     const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+    const handleScreenshotChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            set('paymentScreenshot', reader.result);
+        };
+        reader.readAsDataURL(file);
+    };
 
     const due = Number(form.amount) - Number(form.paid);
     const status = due <= 0 ? 'Paid' : Number(form.paid) === 0 ? (new Date(form.dueDate) < new Date() ? 'Overdue' : 'Pending') : 'Partial';
@@ -53,6 +63,16 @@ function FeeModal({ fee, onClose, onSave, studentsList = [] }) {
                             </select>
                         </div>
                         <div className="input-group"><label className="input-label">Transaction ID</label><input className="input-field" placeholder="TXN12345" value={form.txn} onChange={e => set('txn', e.target.value)} /></div>
+                        <div className="input-group full-width">
+                            <label className="input-label">Payment Screenshot <span style={{ color: '#f43f5e' }}>*</span></label>
+                            <input type="file" accept="image/*" className="input-field" onChange={handleScreenshotChange} />
+                            {form.paymentScreenshot && (
+                                <div style={{ marginTop: 10 }}>
+                                    <img src={form.paymentScreenshot} alt="Payment Proof" style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 8, objectFit: 'contain', border: '1px solid var(--border)' }} />
+                                    <button className="btn btn-sm btn-secondary" style={{ marginTop: 5 }} onClick={() => set('paymentScreenshot', '')}>Remove</button>
+                                </div>
+                            )}
+                        </div>
                     </div>
                     {form.amount && (
                         <div className="fee-summary-box">
@@ -65,7 +85,14 @@ function FeeModal({ fee, onClose, onSave, studentsList = [] }) {
                 </div>
                 <div className="modal-footer">
                     <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
-                    <button className="btn btn-primary" onClick={() => { onSave({ ...form, due, status, id: form.id || `f${Date.now()}` }); onClose(); }}><MdSave /> Save</button>
+                    <button className="btn btn-primary" onClick={() => {
+                        if (!form.paymentScreenshot) {
+                            alert("Payment verification screenshot is mandatory!");
+                            return;
+                        }
+                        onSave({ ...form, due, status, id: form.id || `f${Date.now()}` });
+                        onClose();
+                    }}><MdSave /> Save</button>
                 </div>
             </div>
         </div>
@@ -163,7 +190,13 @@ export default function Fees() {
                                         <td><span className="badge" style={{ background: sc.bg, color: sc.color, border: `1px solid ${sc.border}` }}>{f.status}</span></td>
                                         <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{f.method || '—'}</td>
                                         <td>
-                                            <div style={{ display: 'flex', gap: 6 }}>
+                                            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                                                {f.paymentScreenshot && (
+                                                    <button className="btn btn-icon btn-sm" title="View Verification Image" onClick={() => {
+                                                        const win = window.open("");
+                                                        win.document.write(`<img src="${f.paymentScreenshot}" style="max-width:100%"/>`);
+                                                    }}>🖼️</button>
+                                                )}
                                                 <button className="btn btn-icon btn-sm" onClick={() => { setSelected(f); setModal('edit'); }} title="Edit"><MdPayment /></button>
                                                 {f.status !== 'Paid' && <button className="btn btn-icon btn-sm" style={{ color: '#10b981' }} onClick={async () => {
                                                     const updatedFee = { ...f, paid: f.amount, due: 0, status: 'Paid', method: 'Online' };

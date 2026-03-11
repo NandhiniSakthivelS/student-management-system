@@ -18,9 +18,19 @@ const CAT_ICONS = { General: '📋', Academic: '🎓', Exams: '📝', Events: '�
 export default function Notices() {
     const [notices, setNotices] = useState([]);
     const [modal, setModal] = useState(false);
-    const [form, setForm] = useState({ title: '', content: '', category: 'General', priority: 'Medium', author: 'Admin' });
+    const [form, setForm] = useState({ title: '', content: '', category: 'General', priority: 'Medium', author: 'Admin', image: '' });
     const [catFilter, setCatFilter] = useState('');
     const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            set('image', reader.result);
+        };
+        reader.readAsDataURL(file);
+    };
 
     // Fetch notices from backend on mount
     useEffect(() => {
@@ -41,7 +51,7 @@ export default function Notices() {
             console.error('Notice save error:', err);
             setNotices(p => [{ ...newNotice, id: `n${Date.now()}` }, ...p]);
         }
-        setForm({ title: '', content: '', category: 'General', priority: 'Medium', author: 'Admin' });
+        setForm({ title: '', content: '', category: 'General', priority: 'Medium', author: 'Admin', image: '' });
         setModal(false);
     };
 
@@ -84,6 +94,11 @@ export default function Notices() {
                             </div>
                             <h3 className="notice-title">{n.title}</h3>
                             <p className="notice-content">{n.content}</p>
+                            {n.image && (
+                                <div style={{ marginTop: 15, marginBottom: 15 }}>
+                                    <img src={n.image} alt="Notice attachment" style={{ width: '100%', maxHeight: 300, objectFit: 'cover', borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)' }} />
+                                </div>
+                            )}
                             <div className="notice-footer">
                                 <span>📅 {n.date}</span>
                                 <span>✍️ {n.author}</span>
@@ -116,6 +131,16 @@ export default function Notices() {
                                         </select>
                                     </div>
                                     <div className="input-group full-width"><label className="input-label">Author / Department</label><input className="input-field" placeholder="Administration" value={form.author} onChange={e => set('author', e.target.value)} /></div>
+                                    <div className="input-group full-width">
+                                        <label className="input-label">Attach Image (Optional)</label>
+                                        <input type="file" accept="image/*" className="input-field" onChange={handleImageChange} />
+                                        {form.image && (
+                                            <div style={{ marginTop: 10 }}>
+                                                <img src={form.image} alt="Preview" style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 8, objectFit: 'cover' }} />
+                                                <button className="btn btn-sm btn-secondary" style={{ marginTop: 5 }} onClick={() => set('image', '')}>Remove Image</button>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>

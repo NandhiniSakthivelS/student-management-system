@@ -130,6 +130,35 @@ export default function Grades() {
         }
     };
 
+    const exportCSV = () => {
+        const headers = ['Student Name', 'Roll No', 'Subject', 'Exam', 'Semester', 'Marks', 'Max Marks', 'Grade'];
+        const rows = grades.map(g => [
+            g.studentName,
+            g.roll,
+            g.subject,
+            g.exam,
+            g.semester,
+            g.marks,
+            g.maxMarks,
+            g.grade
+        ]);
+
+        const csvRows = [headers, ...rows].map(row =>
+            row.map(value => `"${String(value || '').replace(/"/g, '""')}"`).join(',')
+        );
+        const BOM = '\uFEFF';
+        const csvContent = BOM + csvRows.join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `Grades_Export_${new Date().toISOString().split('T')[0]}.csv`;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <div className="grades-page">
             <div className="page-header">
@@ -137,7 +166,10 @@ export default function Grades() {
                     <h1 className="page-title">Grades</h1>
                     <p className="page-subtitle">{grades.length} grade records</p>
                 </div>
-                <button className="btn btn-primary" onClick={() => { setSelected(null); setModal('add'); }}><MdAdd /> Add Grade</button>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                    <button className="btn btn-secondary" onClick={exportCSV}>📤 Export CSV</button>
+                    <button className="btn btn-primary" onClick={() => { setSelected(null); setModal('add'); }}><MdAdd /> Add Grade</button>
+                </div>
             </div>
 
             {/* Grade Scale */}
